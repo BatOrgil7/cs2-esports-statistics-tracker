@@ -1,0 +1,109 @@
+==========================================
+CS2 ESPORTS STATISTICS TRACKER - SQL QUERIES
+Student: Bat-Orgil Erdenebat
+Course: CSCI 375
+Date: December 3, 2025
+==========================================
+
+QUERY 1: AGGREGATE QUERY
+------------------------
+DESCRIPTION: Show the average kills per player for each team, ordered from highest to lowest average.
+
+SQL STATEMENT:
+SELECT 
+    t.team_name,
+    ROUND(AVG(ps.kills), 2) AS average_kills
+FROM 
+    Player_Stats ps
+NATURAL JOIN Player p
+NATURAL JOIN Team t
+GROUP BY 
+    t.team_name
+ORDER BY 
+    average_kills DESC;
+
+EXECUTION RESULTS:
++---------------+---------------+
+| team_name     | average_kills |
++---------------+---------------+
+| Team Vitality |         23.67 |
+| Natus Vincere |         22.20 |
+| G2 Esports    |         21.33 |
+| FaZe Clan     |         18.00 |
+| FURIA Esports |         16.67 |
++---------------+---------------+
+Records: 5
+Minimum requirement: 4 records
+
+QUERY 2: NESTED QUERY
+---------------------
+DESCRIPTION: Find all players who have a higher average damage per round than the overall average ADR of all players.
+
+SQL STATEMENT:
+SELECT 
+    player_name,
+    ROUND(AVG(average_damage_per_round), 2) AS player_adr
+FROM 
+    Player_Stats ps
+NATURAL JOIN Player
+WHERE 
+    average_damage_per_round > (
+        SELECT AVG(average_damage_per_round) 
+        FROM Player_Stats
+    )
+GROUP BY 
+    player_id, player_name
+ORDER BY 
+    player_adr DESC;
+
+EXECUTION RESULTS:
++-------------+------------+
+| player_name | player_adr |
++-------------+------------+
+| m0NESY      |     105.40 |
+| ZywOo       |     104.45 |
+| s1mple      |      95.43 |
+| NiKo        |      88.90 |
++-------------+------------+
+Records: 4
+Minimum requirement: 4 records 
+
+
+QUERY 3: DR. TROTTER'S QUESTION
+--------------------------------
+DESCRIPTION: What are the total kills, total deaths, and total assists for each player, ordered from most kills to least?
+
+SQL STATEMENT:
+SELECT 
+    p.player_name,
+    t.team_name,
+    SUM(ps.kills) AS total_kills,
+    SUM(ps.deaths) AS total_deaths, 
+    SUM(ps.assists) AS total_assists
+FROM 
+    Player_Stats ps
+NATURAL JOIN Player p
+NATURAL JOIN Team t
+GROUP BY 
+    p.player_id, p.player_name, t.team_name
+ORDER BY 
+    total_kills DESC;
+
+EXECUTION RESULTS:
++-------------+---------------+-------------+--------------+---------------+
+| player_name | team_name     | total_kills | total_deaths | total_assists |
++-------------+---------------+-------------+--------------+---------------+
+| s1mple      | Natus Vincere |          77 |           60 |            14 |
+| ZywOo       | Team Vitality |          52 |           32 |             7 |
+| m0NESY      | G2 Esports    |          42 |           36 |             7 |
+| karrigan    | FaZe Clan     |          39 |           46 |             9 |
+| yuurih      | FURIA Esports |          36 |           40 |            10 |
+| electroNic  | Natus Vincere |          34 |           42 |            12 |
+| NiKo        | G2 Esports    |          22 |           18 |             6 |
+| apEX        | Team Vitality |          19 |           16 |             7 |
+| rain        | FaZe Clan     |          15 |           19 |             6 |
+| arT         | FURIA Esports |          14 |           22 |             8 |
++-------------+---------------+-------------+--------------+---------------+
+Records: 10
+Minimum requirement: 4 records
+
